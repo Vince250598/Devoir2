@@ -8,11 +8,40 @@ class PostFix {
 private:
 	stack<char> pile;
 	vector<char> tabPostFix;
+	stack<string> pileCalcul;
 public:
 	string transformerEnPostFix(string expression);
 	bool estUneValeur(char c);
 	int poidsOperateur(char c);
+	string evaluerExpressionPostFix(string expression);
+	int evaluerOperation(int valeur1, int valeur2, char operateur);
 };
+
+int PostFix::evaluerOperation(int valeur1, int valeur2, char operateur) {
+	int resultat;
+
+	switch (operateur)
+	{
+	case '+':
+		resultat = valeur1 + valeur2;
+		break;
+	case '-' :
+		resultat = valeur1 - valeur2;
+		break;
+	case '*' :
+		resultat = valeur1 * valeur2;
+		break;
+	case '/':
+		resultat = valeur1 / valeur2;
+		break;
+	case '%':
+		resultat = valeur1 % valeur2;
+		break;
+	default:
+		break;
+	}
+	return resultat;
+}
 
 int PostFix::poidsOperateur(char c) {
 	int poids = -1;
@@ -73,6 +102,33 @@ string PostFix::transformerEnPostFix(string expression) {
 	return postfix;
 }
 
+string PostFix::evaluerExpressionPostFix(string expression) {
+	string resultat;
+	char operateur;
+	int valeur1;
+	int valeur2;
+
+	for (int i = 0; i < expression.length(); i++)
+	{
+		if (estUneValeur(expression[i])) {
+			string s(1, expression[i]);
+			pileCalcul.push(s);
+		}
+		else if (poidsOperateur(expression[i]) != -1)
+		{
+			valeur1 = stoi(pileCalcul.top());
+			pileCalcul.pop();
+			valeur2 = stoi(pileCalcul.top());
+			pileCalcul.pop();
+			string res = to_string(evaluerOperation(valeur2, valeur1, expression[i]));
+			pileCalcul.push(res);
+		}
+
+	}
+
+	resultat = pileCalcul.top();
+	return resultat;
+}
 
 int main() {
 	string expression;
@@ -80,7 +136,10 @@ int main() {
 	cin >> expression;
 
 	PostFix post;
-	cout << "\nExpression PostFix: " << post.transformerEnPostFix(expression) << endl;
+	string expressionPost = post.transformerEnPostFix(expression);
+	cout << "\nExpression PostFix: " << expressionPost << endl;
+
+	cout << "\nResultat PostFix: " << post.evaluerExpressionPostFix(expressionPost) << endl << endl;
 	
 	system("PAUSE");
 	return 1;
