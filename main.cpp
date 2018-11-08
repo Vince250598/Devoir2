@@ -7,7 +7,7 @@ using namespace std;
 class PostFix {
 private:
 	stack<char> pile;
-	vector<char> tabPostFix;
+	vector<string> tabPostFix;
 	stack<string> pileCalcul;
 public:
 	string transformerEnPostFix(string expression);
@@ -59,7 +59,26 @@ bool PostFix::estUneValeur(char c) {
 }
 
 string PostFix::transformerEnPostFix(string expression) {
-	
+	int j = 0;
+	string element = "";
+
+	for (int i = 0; i < expression.length(); i++) //ne pas utiliser cin
+	{
+		if (expression[i] == ' ')
+		{
+			j++;
+		}
+		else if(expression[i + 1] == ' ')
+		{
+			element += expression[i];
+			tabPostFix[j] = element;
+		}
+		else
+		{
+			element += expression[i];
+		}
+	}
+
 	char temp;
 
 	string postfix = "";
