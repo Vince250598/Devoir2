@@ -14,8 +14,9 @@ public:
 	void transformerEnPostFix(string expression);
 	bool estUneValeur(string c);
 	int poidsOperateur(string c);
-	string evaluerExpressionPostFix(string expression);
+	string evaluerExpressionPostFix();
 	int evaluerOperation(int valeur1, int valeur2, char operateur);
+	void evaluationComplete();
 };
 
 int PostFix::evaluerOperation(int valeur1, int valeur2, char operateur) {
@@ -140,25 +141,24 @@ void PostFix::transformerEnPostFix(string expression) {
 	}
 }
 
-/*string PostFix::evaluerExpressionPostFix(string expression) {
+string PostFix::evaluerExpressionPostFix() {
 	string resultat;
-	char operateur;
+	string operateur;
 	int valeur1;
 	int valeur2;
 
-	for (int i = 0; i < expression.length(); i++)
+	for (int i = 0; i < tabPostFix.size(); i++)
 	{
-		if (estUneValeur(expression[i])) {
-			string s(1, expression[i]);
-			pileCalcul.push(s);
+		if (estUneValeur(tabPostFix.at(i))) {
+			pileCalcul.push(tabPostFix.at(i));
 		}
-		else if (poidsOperateur(expression[i]) != -1)
+		else if (poidsOperateur(tabPostFix.at(i)) != -1)
 		{
 			valeur1 = stoi(pileCalcul.top());
 			pileCalcul.pop();
 			valeur2 = stoi(pileCalcul.top());
 			pileCalcul.pop();
-			string res = to_string(evaluerOperation(valeur2, valeur1, expression[i]));
+			string res = to_string(evaluerOperation(valeur2, valeur1, tabPostFix.at(i)[0]));
 			pileCalcul.push(res);
 		}
 
@@ -166,18 +166,20 @@ void PostFix::transformerEnPostFix(string expression) {
 
 	resultat = pileCalcul.top();
 	return resultat;
-}*/
+}
 
-int main() {
+void PostFix::evaluationComplete() {
 	string expression;
 	cout << "Entrez l'expression infixe à transformer en postfix: " << endl;
 	getline(cin, expression);
 
-	PostFix post;
-	post.transformerEnPostFix(expression);
-	
+	transformerEnPostFix(expression);
+	cout << evaluerExpressionPostFix() << endl;
+}
 
-	//cout << "\nResultat PostFix: " << post.evaluerExpressionPostFix(expressionPost) << endl << endl;
+int main() {
+	PostFix post;
+	post.evaluationComplete();
 	
 	system("PAUSE");
 	return 1;
