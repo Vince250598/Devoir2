@@ -6,13 +6,14 @@ using namespace std;
 
 class PostFix {
 private:
-	stack<char> pile;
+	stack<string> pile;
+	vector<string> tabPreFix;
 	vector<string> tabPostFix;
 	stack<string> pileCalcul;
 public:
-	string transformerEnPostFix(string expression);
-	bool estUneValeur(char c);
-	int poidsOperateur(char c);
+	void transformerEnPostFix(string expression);
+	bool estUneValeur(string c);
+	int poidsOperateur(string c);
 	string evaluerExpressionPostFix(string expression);
 	int evaluerOperation(int valeur1, int valeur2, char operateur);
 };
@@ -43,22 +44,30 @@ int PostFix::evaluerOperation(int valeur1, int valeur2, char operateur) {
 	return resultat;
 }
 
-int PostFix::poidsOperateur(char c) {
+int PostFix::poidsOperateur(string c) {
 	int poids = -1;
-	if (c == '+' || c == '-')
+	if (c.length() > 1)
+	{
+		return poids;
+	}
+	if (c.at(0) == '+' || c.at(0) == '-')
 		poids = 1;
-	else if (c == '*' || c == '/' || c == '%')
+	else if (c.at(0) == '*' || c.at(0) == '/' || c.at(0) == '%')
 		poids = 2;
 	return poids;
 }
 
-bool PostFix::estUneValeur(char c) {
-	if (c >= '0' && c <= '9')
-		return true;
-	return false;
+bool PostFix::estUneValeur(string c) {
+	for (int i = 0; i < c.length(); i++)
+	{
+		if (c.at(i) > 57 || c.at(i) < 48) {
+			return false;
+		}
+	}
+	return true;
 }
 
-string PostFix::transformerEnPostFix(string expression) {
+void PostFix::transformerEnPostFix(string expression) {
 	int j = 0;
 	string element = "";
 
@@ -72,48 +81,51 @@ string PostFix::transformerEnPostFix(string expression) {
 		else if(expression[i + 1] == ' ')
 		{
 			element += expression[i];
-			tabPostFix.insert(tabPostFix.begin() + j, element);
+			tabPreFix.insert(tabPreFix.begin() + j, element);
 			j++;
 		}
 		else if(i == (expression.length()-1))
 		{
 			element += expression[i];
-			tabPostFix.insert(tabPostFix.begin() + j, element);
+			tabPreFix.insert(tabPreFix.begin() + j, element);
 		}
 		else
 		{
 			element += expression[i];
-			element = "";
 		}
 	}
 
-	char temp;
+	string temp;
+	j = 0;
 
 	string postfix = "";
-	for (int i = 0; i < expression.length(); i++) {
+	for (int i = 0; i < tabPreFix.size(); i++) {
 
-		if (poidsOperateur(expression[i]) != -1)
+		if (poidsOperateur(tabPreFix.at(i)) != -1)
 		{
-			while (!pile.empty() && pile.top() != '(' && poidsOperateur(pile.top() <= poidsOperateur(expression[i])))
+			while (!pile.empty() && pile.top().at(0) != '(' && poidsOperateur(pile.top()) <= poidsOperateur(tabPreFix.at(i)))
 			{
-				postfix += pile.top();
+				tabPostFix.insert(tabPostFix.begin() + j, pile.top());
 				pile.pop();
+				j++;
 			}
-			pile.push(expression[i]);
+			pile.push(tabPreFix.at(i));
 		}
-		else if (estUneValeur(expression[i]))
+		else if (estUneValeur(tabPreFix.at(i)))
 		{
-			postfix += expression[i];
+			tabPostFix.insert(tabPostFix.begin() + j, tabPreFix.at(i));
+			j++;
 		}
-		else if (expression[i] == '(')
+		else if (tabPreFix.at(i)[0] == '(')
 		{
-			pile.push(expression[i]);
+			pile.push(tabPreFix.at(i));
 		}
-		else if (expression[i] == ')')
+		else if (tabPreFix.at(i)[0] == ')')
 		{
-			while (!pile.empty() && pile.top() != '(')
+			while (!pile.empty() && pile.top().at(0) != '(')
 			{
-				postfix += pile.top();
+				tabPostFix.insert(tabPostFix.begin() + j, pile.top());
+				j++;
 				pile.pop();
 			}
 			pile.pop();
@@ -122,14 +134,13 @@ string PostFix::transformerEnPostFix(string expression) {
 	}
 	while (!pile.empty())
 	{
-		postfix += pile.top();
+		tabPostFix.insert(tabPostFix.begin() + j, pile.top());
+		j++;
 		pile.pop();
 	}
-
-	return postfix;
 }
 
-string PostFix::evaluerExpressionPostFix(string expression) {
+/*string PostFix::evaluerExpressionPostFix(string expression) {
 	string resultat;
 	char operateur;
 	int valeur1;
@@ -155,7 +166,7 @@ string PostFix::evaluerExpressionPostFix(string expression) {
 
 	resultat = pileCalcul.top();
 	return resultat;
-}
+}*/
 
 int main() {
 	string expression;
@@ -163,10 +174,10 @@ int main() {
 	getline(cin, expression);
 
 	PostFix post;
-	string expressionPost = post.transformerEnPostFix(expression);
-	cout << "\nExpression PostFix: " << expressionPost << endl;
+	post.transformerEnPostFix(expression);
+	
 
-	cout << "\nResultat PostFix: " << post.evaluerExpressionPostFix(expressionPost) << endl << endl;
+	//cout << "\nResultat PostFix: " << post.evaluerExpressionPostFix(expressionPost) << endl << endl;
 	
 	system("PAUSE");
 	return 1;
