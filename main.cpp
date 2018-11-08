@@ -62,20 +62,28 @@ string PostFix::transformerEnPostFix(string expression) {
 	int j = 0;
 	string element = "";
 
-	for (int i = 0; i < expression.length(); i++) //ne pas utiliser cin
+	for (int i = 0; i < expression.length(); i++)
 	{
 		if (expression[i] == ' ')
 		{
-			j++;
+			element = "";
+			continue;
 		}
 		else if(expression[i + 1] == ' ')
 		{
 			element += expression[i];
-			tabPostFix[j] = element;
+			tabPostFix.insert(tabPostFix.begin() + j, element);
+			j++;
+		}
+		else if(i == (expression.length()-1))
+		{
+			element += expression[i];
+			tabPostFix.insert(tabPostFix.begin() + j, element);
 		}
 		else
 		{
 			element += expression[i];
+			element = "";
 		}
 	}
 
@@ -152,7 +160,7 @@ string PostFix::evaluerExpressionPostFix(string expression) {
 int main() {
 	string expression;
 	cout << "Entrez l'expression infixe à transformer en postfix: " << endl;
-	cin >> expression;
+	getline(cin, expression);
 
 	PostFix post;
 	string expressionPost = post.transformerEnPostFix(expression);
