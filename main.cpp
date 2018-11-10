@@ -10,13 +10,14 @@ private:
 	vector<string> tabPreFix;
 	vector<string> tabPostFix;
 	stack<string> pileCalcul;
+	string postFix = "";
 public:
 	void transformerEnPostFix(string expression);
 	bool estUneValeur(string c);
 	int poidsOperateur(string c);
 	string evaluerExpressionPostFix();
 	int evaluerOperation(int valeur1, int valeur2, char operateur);
-	void evaluationComplete();
+	void evaluation();
 };
 
 int PostFix::evaluerOperation(int valeur1, int valeur2, char operateur) {
@@ -99,7 +100,6 @@ void PostFix::transformerEnPostFix(string expression) {
 	string temp;
 	j = 0;
 
-	string postfix = "";
 	for (int i = 0; i < tabPreFix.size(); i++) {
 
 		if (poidsOperateur(tabPreFix.at(i)) != -1)
@@ -139,6 +139,11 @@ void PostFix::transformerEnPostFix(string expression) {
 		j++;
 		pile.pop();
 	}
+
+	for (int i = 0; i < tabPostFix.size(); i++)
+	{
+		postFix += tabPostFix.at(i);
+	}
 }
 
 string PostFix::evaluerExpressionPostFix() {
@@ -168,18 +173,28 @@ string PostFix::evaluerExpressionPostFix() {
 	return resultat;
 }
 
-void PostFix::evaluationComplete() {
+void PostFix::evaluation() {
 	string expression;
-	cout << "Entrez l'expression infixe à transformer en postfix: " << endl;
+	cout << "Entrez l'expression a evaluer" << endl;
+	cout << "\n**IMPORTANT**" << endl;
+	cout << "(L'expression doit avoir des espaces entre chaques element" << endl;
+	cout << "ex: ( 4 + 5 ) * 9" << endl;
+	cout << "(4+5)*9 -----> ne fonctionnera pas)" << endl << endl;
 	getline(cin, expression);
 
 	transformerEnPostFix(expression);
-	cout << evaluerExpressionPostFix() << endl;
+	cout << "Expression transforme en postFix ---> " << postFix << endl;
+	cout << "Resultat ---> " << evaluerExpressionPostFix() << endl;
+}
+
+void menu() {
+	PostFix post;
+	cout << "Bienvenue dans le calculateur d'expression!!!" << endl;
+	post.evaluation();
 }
 
 int main() {
-	PostFix post;
-	post.evaluationComplete();
+	menu();
 	
 	system("PAUSE");
 	return 1;
